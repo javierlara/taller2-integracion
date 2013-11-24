@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <style>
+        label {
+            display: inline-block;
+            width: 80px;
+        }
+    </style>
+<script>
+
+    function getVal ($el) {
+        if ($el.prop("tagName") === 'INPUT')
+            return $el.val();
+        else if ($el.attr('val'))
+            return $el.attr('val');
+        else
+            return '';
+    }
+
+    function appendAutodeletableMsg($el, msg, color) {
+        var id = Math.random().toString(36).substring(2, 12);
+        $el.append('<h4 id="'     +
+                id                +
+                '"style="color: ' +
+                color             +
+                ';">'             +
+                msg               +
+                '</h4>');
+        setTimeout( function () {
+            $('#' + id).remove();
+        }, 5000);
+    }
+
+    /*
+     Usage: receives the id of the DOM element whose inner elements defines the request through
+     a class name convention:
+     url: the URL for the request. Appended to 'api/securityservice/'
+     type: HTTP verb. Defaults to 'GET'
+     url-param: mandatory parameters of the request, such us user id when using getUser. Appended to the URL
+     query-string: optional parameters of the request. Also, a 'param-name' attribute at the element is needed
+     data: body of the request. 'param-name' attribute at the element is needed
+
+     url-param, query-string and data elements should be inputs or have a val attribute. TODO: take it from id param
+     onSuccess: callback to be called on request success
+     onError: callback to be called on request error
+
+     Although this is our sandbox and nothing here is to be delivered, improvements and suggestions are appreciated.
+     */
+    function sendRequest(idType, onSuccess, onError) {
+        var $el = $("#" + idType),
+            url = 'api/securityservice/',
+            type = 'GET',
+            data = {};
+        // DOM $elements
+        var $url = $el.find('.url'),
+            $type = $el.find('.type'),
+            $urlParams = $el.find('.url-params'),
+            $queryString = $el.find('.query-string'),
+            $data = $el.find('.data');
+
+
+
+        function parseData($el) {
+            var key = $el.attr('param-name'),
+                val = getVal($el);
+
+            if (key !== '' && val !== '')
+                data[key] = val;
+        }
+
+        // Scrapping begins
+        if ($url[0])
+            url += getVal($url);
+
+        if ($type[0])
+            type = getVal($type);
+
+        $urlParams.each( function (idx) {
+            var $el = $urlParams.eq(idx),
+                    value = getVal($el);
+
+            if (value !== '')
+                url += '/' + value;
+        });
+
+        $queryString.each( function (idx) {
+            parseData($queryString.eq(idx));
+        });
+
+        $data.each( function (idx) {
+            parseData($data.eq(idx));
+        });
+
+        // AJAX request!
+        $.ajax({
+            url: url,
+            type: type,
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            error: function (jqXHR, textStatus, errorThrown ) {
+                if (typeof onError === "function") {
+                    onError.apply(this, arguments);
+                } else {
+                    appendAutodeletableMsg($el, 'Ha ocurrido un error', 'red');
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            },
+            success: function (data, textStatus, jqXHR) {
+                if (typeof onSuccess === "function") {
+                    onSuccess.apply(this, arguments);
+                } else {
+                    if (data) {
+                        if (data.success) {
+                            appendAutodeletableMsg($el, 'Request OK ' + data.reason, 'blue');
+                        } else {
+                            appendAutodeletableMsg($el, 'Request mal; reason: ' + data.reason, 'red');
+                        }
+                    } else {
+                        appendAutodeletableMsg($el, 'Request OK', 'blue');
+                    }
+                    console.log(data);
+                    console.log(textStatus);
+                    console.log(jqXHR);
+                }
+            }
+        })
+    }
+    
+    function onSuccessfulLogin(data){
+        function success() {
+            $('#loggedOutSection').hide();
+            $('#loggedInSection').show();
+        }
+        if (data) {
+            if (data.success) {
+                success();
+            } else {
+                appendAutodeletableMsg($('#login'), 'Request mal; reason: ' + data.reason, 'red');
+            }
+        } else {
+            success();
+        }
+    }
+    
+    function onSuccessfulLogout(){
+        $('#loggedInSection').hide();
+        $('#loggedOutSection').show();
+    }
+    
+    function checkSession(){
+    	// AJAX request!
+        $.ajax({
+            url: 'api/securityservice/isloggedin',
+            type: 'POST',
+            error: function (jqXHR, textStatus, errorThrown ) {
+                onSuccessfulLogout();
+                
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            },
+            success: function (data, textStatus, jqXHR) {
+                if (data) {
+                    if (data.success) {
+                        onSuccessfulLogin();
+                    } else {
+                        onSuccessfulLogout();
+                    }
+                } else {
+                    onSuccessfulLogin();
+                }
+
+                console.log(data);
+                console.log(textStatus);
+                console.log(jqXHR);
+            }
+        })
+    }
+    
+    checkSession();
+    
+	</script>
+</head>
+<body>
+
+<div id="loggedOutSection" style="display: none;">
+	<section id="registeruser">
+	    <h2>registeruser test</h2>
+	    <div class="registeruser">
+	        <div   class="url" val="registeruser" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Usuario:</label>    <input class="data" param-name="username" type="text" /><br>
+	        <label>Contraseña:</label> <input class="data" param-name="password" type="password" ><br>
+	        <label>Nombre:</label>     <input class="data" param-name="nombre" type="text" /><br>
+	        <label>Apellido:</label>   <input class="data" param-name="apellido" type="text" /><br>
+	        <label>Padrón:</label>     <input class="data" param-name="padron" type="text" /><br>
+	        <label>FechaNac:</label>   <input class="data" param-name="fechaNac" type="date" /><br>
+	        <label>Email:</label>      <input class="data" param-name="email" type="text" /><br>
+	        <label>Rol:</label>        <input class="data" param-name="rol" type="number" /><br>
+
+	        <button onclick="sendRequest('registeruser')">Register</button>
+	    </div>
+	</section>
+
+	<hr />
+
+	<section id="login">
+	    <h2>login test</h2>
+	    <div class="login">
+	        <div   class="url" val="login" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Usuario:</label>    <input class="data" param-name="username" type="text" /><br>
+	        <label>Contraseña:</label> <input class="data" param-name="password" type="password" ><br>
+	        <button onclick="sendRequest('login', onSuccessfulLogin)">Login</button>
+	    </div>
+	</section>
+
+	<hr />
+
+	<section id="activateuser">
+	    <h2>activateUser test</h2>
+	    <div class="activateuser">
+	        <div   class="url" val="activateuser" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Usuario:</label> <input class="data" param-name="username" type="text" value="juan" /><br>
+	        <button onclick="sendRequest('activateuser')">Activate</button>
+	    </div>
+	</section>
+
+	<hr />
+
+	<section id="enableaccountfromemail">
+	    <h2>enableAccountFromEmail test (@todo)</h2>
+	    <div class="enableAccountFromEmaill">
+	        <div   class="url" val="enableaccountfromemail" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <button onclick="sendRequest('enableaccountfromemail')">Enable</button>
+	    </div>
+	</section>
+</div>
+
+
+<div id="loggedInSection" style='display:none'>
+	<div>Estas loggeado</div>
+	
+	<hr />
+	
+	<section id="changepassword">
+	    <h2>changePassword test</h2>
+	    <div class="changepassword">
+	        <div   class="url" val="changepassword" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Old Password:</label> <input class="data" param-name="oldPassword" type="text" /><br>
+	        <label>New Password:</label> <input class="data" param-name="newPassword" type="text" /><br>
+	        <button onclick="sendRequest('changepassword')">Change</button>
+	    </div>
+	</section>
+	
+	<hr />
+	
+	<section id="resetpassword">
+	    <h2>resetPassword test</h2>
+	    <div class="resetPassword">
+	        <div   class="url" val="resetpassword" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Id Usuario (opcional):</label> <input class="data" param-name="userId" type="text" /><br>
+	        <button onclick="sendRequest('resetpassword')">Reset</button>
+	    </div>
+	</section>
+	
+	<hr />
+	
+	<section id="disableaccount">
+	    <h2>disableAccount test</h2>
+	    <div class="disableAccount">
+	        <div   class="url" val="disableaccount" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Id Usuario:</label> <input class="data" param-name="userId" type="text" /><br>
+	        <button onclick="sendRequest('disableaccount')">Disable</button>
+	    </div>
+	</section>
+	
+	<hr />
+	
+	<section id="enableaccount">
+	    <h2>enableAccount test</h2>
+	    <div class="enableAccount">
+	        <div   class="url" val="enableaccount" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <label>Id Usuario:</label> <input class="data" param-name="userId" type="text" /><br>
+	        <button onclick="sendRequest('enableaccount')">Enable</button>
+	    </div>
+	</section>
+
+	<hr />
+	
+	<section id="logout">
+	    <h2>logout test</h2>
+	    <div class="logout">
+	        <div   class="url" val="logout" style="display: hidden;"/>
+	        <div   class="type" val="POST" style="display: hidden;"/>
+	        <button onclick="sendRequest('logout', onSuccessfulLogout)">Logout</button>
+	    </div>
+	</section>
+</div>
+    
+</body>
+</html>

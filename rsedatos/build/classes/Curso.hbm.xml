@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ar.fiuba.redsocedu.datalayer.dtos">
+
+    <class name="Curso" table="cursos">
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="nombre" column="nombre"/>
+        <set name="alumnos" table="alumnos_cursos" 
+             inverse="false" lazy="true" fetch="select" cascade="all" >
+            <key column="curso_id"/>
+            <many-to-many column="alumno_id" class="Alumno"/>
+        </set>
+    </class>
+
+</hibernate-mapping>
