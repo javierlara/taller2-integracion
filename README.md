@@ -16,6 +16,8 @@ Para la compilación de este proyecto, importarlo en eclipse y exportarlo como w
 
 http://sourceforge.net/p/redsocialeducativataller22013/code-0/HEAD/tree/Grupos/Persistencia/Datos/trunk/
 
+También con ant en el root del proyecto: `ant war`
+
 
 - **taller-webapp** (*Capa Presentación*)
 
@@ -33,6 +35,10 @@ File -> Import... -> General -> Existing Projects into Workspace
 Una vez importado el proyecto, se debe exportarlo como war:
 
 File -> Export... -> Web -> WAR File
+
+Ant:
+
+En el root del proyecto: `ant war`
 
 - **fiuba.taller2.elprimero** (*Capa Usuario*)
 
