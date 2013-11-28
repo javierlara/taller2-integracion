@@ -34,13 +34,28 @@ Una vez importado el proyecto, se debe exportarlo como war:
 
 File -> Export... -> Web -> WAR File
 
+- **fiuba.taller2.elprimero** (*Capa Usuario*)
+
+Instalar node
+
+`sudo apt-get install nodejs`
+
+Para correr la app 
+
+Primero correr (por unica vez) para obtener las dependencias
+
+`npm install`
+
+Para levantar el server (lo hace en el puerto 5000)
+
+`node web.js`
 
 Deploy en Tomcat
 ----------------------
 
 Una vez que se tengan todos los war, copiarlos en `tomcat7/webapps/`
-Y correr tomcat
+Y correr tomcat y el proyecto de fiuba.taller2.elprimero
 
 
-**Probar integración en http://localhost:8080/taller-webapp/**
+**Probar integración en http://localhost:5000**
 
