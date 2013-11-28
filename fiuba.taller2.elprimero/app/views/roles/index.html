@@ -1,0 +1,45 @@
+<h1>Roles</h1>
+
+<table class="table table-striped table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th>#</th>
+			<th>Nombre</th>
+			<th>Fecha Creaci&oacute;n</th>                    
+			<th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="rol in roles">
+            <td>{{rol.id}}</td>
+            <td>{{rol.nombre}}</td>
+            <td>{{rol.fecha}}</td>
+            <td>
+                <img class="link" src="/images/editar.png" ng-click="edit_rol($index)" width="20px" height="20px"/>
+                <img class="link" src="/images/eliminar.png" ng-click="delete_rol($index)" width="20px" height="20px"/>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<form ng-submit="create_rol()" role="form" name="rolForm" class="mar-top">
+    <h2>{{mode}} Rol</h2>
+    <hr/>
+
+    <div class="form-group">
+	
+	<div class="form-group">
+		<label class="control-label">Fecha de creaci&oacute;n:</label>			
+		<label ng-show="rol.fecha" class="control-label">{{rol.fecha}}</label>
+		<label ng-show="!rol.fecha" class="control-label">{{fecha.date | date:'dd/MM/yyyy'}}</label>
+	</div>
+
+    <div class="form-group">
+        <label>Nombre del rol</label>
+        <input required type="text"  name="nombre" class="form-control" ng-model="rol.nombre" placeholder="Nombre" />
+        <span class="error" ng-show="rolForm.nombre.$error.required">* Requerido</span>
+    </div>
+
+    <input type="submit" class="btn btn-success" value="Guardar">
+</form>

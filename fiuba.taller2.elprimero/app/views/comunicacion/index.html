@@ -1,0 +1,22 @@
+<div class="jumbotron">
+	<h1>Bienvenido</h1>
+	<p>Fiuba Social</p>
+	<p><a class="btn btn-primary btn-lg">Mas información</a></p>
+</div>
+
+<div>
+	<h2>Novedades</h2>
+	<div id="news-feed">
+		<div class="panel panel-default" style="display:table;" ng-repeat="activity in news">
+			<div class="col-md-2">
+				<img ng-src="{{activity.image}}" height="60" width="60" />
+			</div>
+			<div class="col-md-8">
+				<a href="#"><strong>{{activity.author}}</strong></a>
+				<h4>{{activity.title}}</h4>
+				<p>{{activity.text}}</p>
+			</div>
+			<div><small>{{activity.date}}</small></div>
+		</div>
+	</div>
+</div>

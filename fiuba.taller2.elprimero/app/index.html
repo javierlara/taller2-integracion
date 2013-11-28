@@ -1,0 +1,212 @@
+<!DOCTYPE html >
+<html  ng-app="fiuba">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Fiuba Social</title>
+
+		<link rel="shortcut icon" href="/images/favicon.ico"/>
+
+		<!-- css -->
+        <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" type="text/css" media="screen" >
+        <link href="/stylesheets/bootstrap-glyphicons.css" rel="stylesheet">
+        <link href="/stylesheets/chat.css" rel="stylesheet">
+        
+        <link href="/stylesheets/bootstrap-fileupload.css" rel="stylesheet">
+        <link href="/stylesheets/jquery.fileupload.css" rel="stylesheet" >
+        <link href="/stylesheets/jquery.fileupload.css" rel="stylesheet" >
+        <link href="/stylesheets/encuesta.css" rel="stylesheet" >
+        <link href="/stylesheets/menu.css" rel="stylesheet">
+
+		<!-- js -->
+        <script src="/javascripts/jquery.js"></script>
+        <script src="/javascripts/bootstrap.min.js"></script>
+        <script src="/javascripts/bootstrap-fileupload.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.min.js"></script>
+
+        <script src="controllers/app.js"></script>
+        <script src="services/AuthenticationService.js"></script>
+        <script src="controllers/ChatController.js"></script>
+        <script src="controllers/NewsController.js"></script>
+        <script src="controllers/ArchivosController.js"></script>
+        <script src="controllers/EncuestasController.js"></script>
+        <script src="controllers/RolesController.js"></script>
+        <script src="controllers/SideBarMenuController.js"></script>
+        <script src="controllers/WikiController.js"></script>
+        <script src="controllers/UsersController.js"></script>
+        <script src="controllers/TableController.js"></script>
+        <script src="controllers/LinksController.js"></script>
+
+    </head>
+
+    <body>
+        <div ng-view ng-show="hide_layout(location)">
+        </div>
+
+        <nav class="navbar navbar-default" role="navigation" ng-hide="hide_layout(location)">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Fiuba Social</a>
+            </div>
+
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/" ><i class="glyphicon glyphicon-home"></i></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Departamento <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="computacion.html">Computación</a></li>
+                                <li><a href="#">Matemática</a></li>
+                                <li><a href="#">Administración</a></li>
+                                <li><a href="#">Idioma</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/adminConfig/index">System</a></li>
+                                <li class="divider"></li>
+                                <li><a href="/adminUser/index">Users</a></li>
+                                <li><a href="/adminPermission/index">User Permissions</a></li>
+                                <li><a href="/adminRole/index">User Roles</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="glyphicon glyphicon-user"></i>
+                                {{current_user.email}}
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Mi cuenta</a></li>
+                                <li><a href="#">Configuración</a></li>
+                                <li><a href="#/users/signin">Salir</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+            </div>
+        </nav>
+
+        <!-- Contenido  -->
+        <div class="container" ng-hide="hide_layout(location)">
+            
+
+			<div class="row" >
+				<div class="col-md-3">
+					<ul class="nav nav-pills nav-stacked" ng-controller="SideBarMenuController">
+						<li ng-class="{active: location.path() == '/'}">
+                            <a href="#">Comunicación</a>
+                        </li>
+						
+                        <li ng-class="{active: visiting('recursos') }">
+                            <a ng-click="open_recursos()">Recursos</a>
+                            <ul ng-show="visiting('recursos') || recursos_selected" class="submenu">
+                                <li ng-class="{active_sub: visiting('archivos') }">
+                                    <a href="#/recursos/archivos">Archivos</a>
+                                </li>
+
+                                <li ng-class="{active_sub: visiting('links') }">
+                                    <a href="#/recursos/links">Links</a>
+                                </li>
+
+                                <li ng-class="{active_sub: visiting('encuestas') }">
+                                    <a href="#/recursos/encuestas">Encuestas</a>
+                                </li>
+                            </ul>
+                        </li>
+
+						<li ng-class="{active: visiting('participacion') }" >
+                            <a ng-click="open_participacion()">Participación</a>
+
+                            <ul ng-show="visiting('participacion') || participacion_selected" class="submenu">
+                                <li ng-class="{active_sub: visiting('ambitos') }">
+                                    <a href="#/participacion/ambitos">Ambitos</a>
+                                </li>
+                                
+                                <li ng-class="{active_sub: visiting('roles') }">
+                                    <a href="#/participacion/roles">Roles</a>
+                                </li>
+
+                                <li ng-class="{active_sub: visiting('inscripcion') }">
+                                    <a href="#/participacion/inscripcion">Inscripción</a>
+                                </li>
+
+                                <li ng-class="{active_sub: visiting('calificacion') }">
+                                    <a href="#/participacion/calificacion">Calificación</a>
+                                </li>
+                            </ul>
+                        </li>
+
+						<li ng-class="{active: visiting('colaboracion') }">
+                            <a ng-click="open_colaboracion()">Colaboración</a>
+
+                            <ul ng-show="visiting('colaboracion') || colaboracion_selected" class="submenu">
+                                <li ng-class="{active_sub: visiting('wiki') }">
+                                    <a href="#/colaboracion/wiki">Wiki</a>
+                                </li>
+
+                                <li ng-class="{active_sub: visiting('tablas') }">
+                                    <a href="#/colaboracion/tablas">Tablas</a>
+                                </li>
+                            </ul>
+                        </li>
+					</ul>
+				</div>		
+
+				<div ng-view class="col-md-8">
+
+                </div>
+		    </div>
+        </div>
+
+
+        <div id="chat_widget" ng-controller="ChatController" ng-hide="hide_layout(location)">
+            <div id="user_list">
+                <div class='title' ng-click="close_chat_list()">
+                   FIUBA Chat
+                </div>
+
+                <div id="users_container" ng-show="chat_list_open">
+                    <ul id="users">
+                        <li ng-repeat='user in users' class="user_name" ng-click="open_chat(user.id)">
+                            <div class='status {{user.status}}'></div>
+                            <img style="max-width:28px;max-height:28px" ng-src='{{user.image}}'>
+                            <a>{{user.name}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="chat" ng-show="selected_user">
+              <div class='title'>
+                <span>{{selected_user.name}}</span>
+                <a ng-click="close_chat()">x</a> 
+              </div>
+
+              <ul  id="messages">
+                <li class='message_row' ng-repeat='message in messages_with()'>
+                    <img ng-src='{{message.user.image}}'/>
+                    <p>{{message.text}}</p>
+                </li>
+              </ul>
+              
+              <form ng-submit="append_message()">
+                <input type="text" id="message" ng-model="message.text" />
+              </form>
+            </div>  
+        </div>
+
+
+        <div id="footer" style="height: 50px;" ng-hide="hide_layout(location)">            
+        </div>
+    </body>
+</html>

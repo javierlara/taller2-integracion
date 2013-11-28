@@ -1,0 +1,68 @@
+<link href="/stylesheets/login.css" rel="stylesheet">
+<link href="/stylesheets/signup.css" rel="stylesheet">
+
+<div class="container mar-top">
+        <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <legend><a href="http://www.jquery2dotnet.com"><i class="glyphicon glyphicon-globe"></i></a> Crear Cuenta</legend>
+            
+            <form ng-submit="signUp()" class="form" role="form">
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <input class="form-control" name="firstname" placeholder="Nombre" type="text"
+                        required autofocus ng-model="user.name" />
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <input class="form-control" name="lastname" placeholder="Apellido" type="text" required
+                        ng-model="user.lastname" />
+                </div>
+            </div>
+
+            <input class="form-control" name="username" placeholder="Tu usuario" type="text" ng-model="user.username" required/>
+            
+            <div class="label label-danger" ng-show="email_error">{{email_error.message}}</div>
+            <input class="form-control" name="youremail" placeholder="Tu Email" type="email" ng-model="user.email" required/>
+            <input class="form-control" name="reenteremail" placeholder="Repetir Email" type="email" ng-model="user.email_confirmation" required/>
+
+
+            <input class="form-control" name="password" placeholder="Contraseña" type="password" ng-model="user.password" required/>
+            <label for="">
+                Fecha de Nacimiento</label>
+            <div class="row">
+                <div class="col-xs-4 col-md-4">
+                    <select class="form-control">
+                        <option value="Day">Dia</option>
+                        <option value="Day">29</option>
+                    </select>
+                </div>
+                <div class="col-xs-4 col-md-4">
+                    <select class="form-control">
+                        <option value="Month">Mes</option>
+                        <option value="Month">Octubre</option>
+                    </select>
+                </div>
+                <div class="col-xs-4 col-md-4">
+                    <select class="form-control">
+                        <option value="Year">Año</option>
+                        <option value="Year">1987</option>
+                    </select>
+                </div>
+            </div>
+            <label class="radio-inline">
+                <input type="radio" name="sex" id="inlineCheckbox1" value="masculino" required/>
+                Masculino
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="sex" id="inlineCheckbox2" value="femenino" required />
+                Femenino
+            </label>
+            <br />
+            <br />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">
+               Crear Cuenta </button>
+
+            <a href="/">Volver</a>
+            </form>
+        </div>
+    </div>
+</div>
